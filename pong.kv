@@ -1,5 +1,7 @@
 #:kivy 1.0.9
 
+<Obstacles>:
+
 <PongBall>:
     size: 30, 30
     canvas:
@@ -10,8 +12,17 @@
             size: self.size
 
 <PongGame>:
+    pos: 500, 500
     ball: pong_ball
 
     PongBall:
         id: pong_ball
         center: self.parent.center
+
+    Button:
+        id: start_button
+        text: 'Start'
+        pos: self.pos
+        on_release: root.startGame()
+        on_press: root.addObstacles()
+        on_state: print("my current state is {}".format(self.state))
