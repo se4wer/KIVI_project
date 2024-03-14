@@ -46,8 +46,8 @@ class PongGame(Widget):
         but.pos = randint(0,SCREEN_WIDTH), randint(0, SCREEN_HEIGHT)
 
     def obstacle_collision(self):
-        if self.obstacle.widget_collide(self.ball):
-            self.obstacle.remove_widget()
+        if self.widget_collide(self.ball):
+            self.remove_widget(self)
 
     def addObstacles(self):
         print("obstacles added")
@@ -80,8 +80,7 @@ class PongGame(Widget):
             self.start = False
             self.after = True
         if self.obstacles_added:
-            self.obstacle.obstacle_collision()
-
+            self.obstacle_collision()
     # def on_touch_down(self, touch):
     #     if start == True:
     #         self.spawn_ball()
