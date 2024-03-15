@@ -18,6 +18,12 @@ Frame_rate = 20.0
 Free_fall_acceleration = 9.81
 
 
+class Obstacle(Widget):
+    def obstacle_collision(self, ball):
+        if self.collide_widget(ball):
+            print("collision")
+
+
 class PongBall(Widget):
     pos_x = NumericProperty(0)
     pos_y = NumericProperty(0)
@@ -33,29 +39,24 @@ class PongBall(Widget):
 
 # noinspection PyGlobalUndefined
 class PongGame(Widget):
-    obstacle = ObjectProperty(None)
     ball = ObjectProperty(None)
     ball_released = False
     start = False
     after = False
     obstacles_added = False
+    obstacle1 = ObjectProperty(None)
 
     def startGame(self):
         self.start = True
-        but = self.ids["start_button"]
-        but.pos = randint(0,SCREEN_WIDTH), randint(0, SCREEN_HEIGHT)
-
-    def obstacle_collision(self):
-        if self.widget_collide(self.ball):
-            self.remove_widget(self)
 
     def addObstacles(self):
         print("obstacles added")
-        self.obstacle = Widget()
-        self.add_widget(self.obstacle)
-        with self.obstacle.canvas:
-            Rectangle(pos = (600, 600), size = (100, 100))
+        # self.obstacle1 = Widget()
+        # self.add_widget(self.obstacle1)
+        # with self.obstacle1.canvas:
+        #     Rectangle(pos=(600, 600), size=(100, 100))
         self.obstacles_added = True
+
     def serve_ball(self, ang, coef):
         self.ball_released = True
         self.ball.pos_x = SCREEN_WIDTH / 3
@@ -64,6 +65,7 @@ class PongGame(Widget):
         Initial_horizontal_velocity = Initial_velocity * cos(ang) * coef
         self.ball.velocity = (Initial_horizontal_velocity, Initial_vertical_velocity)
         self.ball.center = self.center
+
     def spawn_ball(self):
         self.ball.pos_x = SCREEN_WIDTH / 3
         self.ball.pos_y = SCREEN_HEIGHT / 3
@@ -71,7 +73,7 @@ class PongGame(Widget):
         self.ball_released = False
 
     def update(self, dt):
-        if self.ball_released == True:
+        if self.ball_released:
             self.ball.move()
         if self.start:
             print("game started")
@@ -80,7 +82,8 @@ class PongGame(Widget):
             self.start = False
             self.after = True
         if self.obstacles_added:
-            self.obstacle_collision()
+            self.obstacle1.obstacle_collision(self.ball)
+
     # def on_touch_down(self, touch):
     #     if start == True:
     #         self.spawn_ball()
@@ -90,11 +93,14 @@ class PongGame(Widget):
         else:
             Clock.schedule_once(lambda dt: self.on_touch_down(touch))
             return super(PongGame, self).on_touch_down(touch)
+
     def on_touch_up(self, touch):
-        if ((touch.x < self.width / 3) and (touch.y < self.height / 3)):
+        if (touch.x < self.width / 3) and (touch.y < self.height / 3):
             angle = atan((self.height / 3 - touch.y) / (self.width / 3 - touch.x))
-            c = sqrt(((self.height / 3) - touch.y)**2 + (self.width / 3 - touch.x)**2) / sqrt(((self.height / 3)**2 + (self.width / 3)**2))
+            c = sqrt(((self.height / 3) - touch.y) ** 2 + (self.width / 3 - touch.x) ** 2) / sqrt(
+                ((self.height / 3) ** 2 + (self.width / 3) ** 2))
             self.serve_ball(ang=angle, coef=c)
+
 
 class PongApp(App):
     def build(self):
