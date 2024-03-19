@@ -1,3 +1,4 @@
+import math
 from math import sin, cos, atan, sqrt
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -10,49 +11,34 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.graphics import Rectangle, Color
 from random import randint
+from Obstacle import Obstacle
+from Bullet import Bullet
+import cannon_constants as CONST
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 700
+SCREEN_WIDTH = CONST.SCREEN_WIDTH
+SCREEN_HEIGHT = CONST.SCREEN_HEIGHT
 Initial_velocity = 100
 Frame_rate = 20.0
-Free_fall_acceleration = 9.81
 
-
-class Obstacle(Widget):
-    def __init__(self, pos = None, object_id = 1, **kwargs):
-        super().__init__(**kwargs)
-        if pos == None:
-            pos = 0,0
-        self.id = object_id
-        self.pos = pos
-        self.size = 10, 100
-    def obstacle_collision(self, ball):
-        if self.collide_widget(ball):
-            print(f"collision with {self.id}")
-            return True
-
-
-
-class PongBall(Widget):
-    velocity_x = NumericProperty(0)
-    velocity_y = NumericProperty(0)
-    velocity = ReferenceListProperty(velocity_x, velocity_y)
-
-    def move(self):
-        self.velocity = self.velocity_x, self.velocity_y - (Free_fall_acceleration / Frame_rate)
-        self.pos = Vector(*self.velocity) + self.pos
-
-
-# noinspection PyGlobalUndefined
-class PongGame(Widget):
+class Game(Widget):
     ball = ObjectProperty(None)
     ball_released = False
     start = False
     after = False
     obstacles_added = False
-    obstacle: Obstacle() = ObjectProperty(None)
-    obstacles: [Obstacle()] = ListProperty([])
+    obstacle = ObjectProperty(None)
+    obstacles = ListProperty([])
 
+    def bullet_blast(self, target_block):
+        pos = target_block.pos
+        for obstacle in self.obstacles:
+            distance = sqrt((pos[0] - obstacle.pos[0])**2 + (pos[1] - obstacle.pos[1])**2)
+            print(distance)
+            print(CONST.BULLET_RADIUS)
+            if distance < CONST.BULLET_RADIUS:
+                print("deleted")
+                self.remove_obstacle(obstacle)
+            print()
     def startGame(self):
         self.start = True
 
@@ -69,19 +55,23 @@ class PongGame(Widget):
         self.ball.pos = SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3
         self.ball.velocity = (0, 0)
         self.ball_released = False
+
     def addObstacles(self, pos, object_id, n_of_obstacles):
         print("obstacles added")
         for i in range(n_of_obstacles):
-            obstacle = Obstacle(pos = (500 + 40 * i, 400), object_id = i)
-            self.add_widget(obstacle)
-            self.obstacles.append(obstacle)
+            for j in range(n_of_obstacles):
+                obstacle = Obstacle(pos=(500 + 30 * i, 400 + 30 * j), object_id=f"{i}{j}",
+                                    texture_path='textures/stone texture.png')
+                self.add_widget(obstacle)
+                self.obstacles.append(obstacle)
         self.obstacles_added = True
 
     def update(self, dt):
         if self.obstacles_added:
             for obstacle in self.obstacles:
                 if obstacle.obstacle_collision(self.ball):
-                    self.remove_obstacle(obstacle)
+                    self.bullet_blast(obstacle)
+                    # self.remove_obstacle(obstacle)
         if self.ball_released:
             self.ball.move()
         if self.start:
@@ -96,7 +86,7 @@ class PongGame(Widget):
             self.spawn_ball()
         else:
             Clock.schedule_once(lambda dt: self.on_touch_down(touch))
-            return super(PongGame, self).on_touch_down(touch)
+            return super(Game, self).on_touch_down(touch)
 
     def on_touch_up(self, touch):
         if (touch.x < self.width / 3) and (touch.y < self.height / 3):
@@ -106,13 +96,13 @@ class PongGame(Widget):
             self.serve_ball(ang=angle, coef=c)
 
 
-class PongApp(App):
+class CannonApp(App):
     def build(self) -> Widget():
         Window.size = (SCREEN_WIDTH, SCREEN_HEIGHT)
-        game = PongGame()
+        game = Game()
         Clock.schedule_interval(game.update, 1.0 / Frame_rate)
         return game
 
 
 if __name__ == '__main__':
-    PongApp().run()
+    CannonApp().run()

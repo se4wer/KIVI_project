@@ -1,0 +1,34 @@
+#:kivy 1.0.9
+
+
+<Bullet>:
+    size: 30, 30
+    canvas:
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+
+<Obstacle>:
+    size: 100, 200
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'stone_texture.png'
+
+<Game>:
+    ball: pong_ball
+
+    Bullet:
+        id: pong_ball
+
+    Button:
+        id: start_button
+        text: 'Start'
+        pos: self.pos
+        on_release: root.startGame()
+        on_press: root.addObstacles(pos = (800, 500), object_id = 1, n_of_obstacles = 10)
+        center_x: root.width / 2
+        center_y: root.height / 2
+        source: 'stone texture.png'
