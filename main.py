@@ -1,5 +1,6 @@
 import math
 from math import sin, cos, atan, sqrt
+from kivy.properties import StringProperty
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
@@ -13,11 +14,14 @@ from kivy.graphics import Rectangle, Color
 from Obstacle import Obstacle
 from Bullet import Bullet
 import cannon_constants as CONST
+from kivy.uix.label import Label
 
 SCREEN_WIDTH: int = CONST.SCREEN_WIDTH
 SCREEN_HEIGHT: int = CONST.SCREEN_HEIGHT
 Initial_velocity = CONST.BULLET_MAX_VEL
 Frame_rate = 20.0
+score = 0
+
 
 class AimWidget(Widget):
     def __init__(self, **kwargs):
@@ -28,6 +32,7 @@ class AimWidget(Widget):
     def on_touch_down(self, touch):
         print(f"Touch on aim_widget")
 class Game(Widget):
+    global score
     ball = ObjectProperty(None)
     ball_released = False
     start = False
@@ -36,6 +41,7 @@ class Game(Widget):
     obstacle = ObjectProperty(None)
     obstacles = ListProperty([])
     chosen_weapon = "bullet"
+    score_label = Label(text = str(score))
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
@@ -60,8 +66,11 @@ class Game(Widget):
         self.start = True
 
     def remove_obstacle(self, obstacle):
+        global score
         self.remove_widget(obstacle)
         self.obstacles.remove(obstacle)
+        score+=1
+        print(score)
 
     def serve_ball(self, ang, coef):
         self.ball_released = True
