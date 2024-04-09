@@ -2,7 +2,7 @@
 
 
 <Bullet>:
-    size: 30, 30
+    size: 10, 10
     canvas:
         Ellipse:
             pos: self.pos
@@ -15,7 +15,7 @@
         Rectangle:
             pos: self.pos
             size: self.size
-            source: 'fish.png'
+            source: 'stone_texture.png'
 
 <Game>:
     ball: pong_ball
@@ -28,7 +28,30 @@
         text: 'Start'
         pos: self.pos
         on_release: root.startGame()
-        on_press: root.addObstacles(pos = (800, 500), object_id = 1, n_of_obstacles = 10)
+        on_press: root.addObstacles(pos = (800, 500), object_id = 1, n_of_obstacles_x = 10, n_of_obstacles_y = 30)
         center_x: root.width / 2
         center_y: root.height / 2
-        source: 'stone texture.png'
+
+    Button:
+        id: change_weapon_laser
+        size: 50, 50
+        text: "Laser"
+        on_release: root.change_weapon("laser")
+        center_x: 10 + self.width
+        center_y: root.height - 10 - self.height
+
+    Button:
+        id: change_weapon_bullet
+        size: 50, 50
+        text: "Bullet"
+        on_release: root.change_weapon("bullet")
+        center_x: 10 + 2 * self.width
+        center_y: root.height - 10 - self.height
+
+    Button:
+        id: change_weapon_bullet
+        size: 50, 50
+        text: "Bomb"
+        on_release: root.change_weapon("bomb")
+        center_x: 10 + 3 * self.width
+        center_y: root.height - 10 - self.height

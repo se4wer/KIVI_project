@@ -15,5 +15,5 @@ class Obstacle(Widget):
         self.source = texture_path
     def obstacle_collision(self, ball):
         if self.collide_widget(ball):
-            print(f"collision with {self.id}")
+            # print(f"collision with {self.id}")
             return True

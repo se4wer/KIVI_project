@@ -11,7 +11,7 @@ BULLET_MASS = SCREEN_WIDTH/2
 BOMB_MASS  = SCREEN_WIDTH/3
 
 # Bullet maximum muzzle velocity
-BULLET_MAX_VEL = BULLET_MASS
+BULLET_MAX_VEL = BULLET_MASS /10
 
 # Bombshell maximum muzzle velocity
 BOMB_MAX_VEL = BOMB_MASS
@@ -20,7 +20,7 @@ BOMB_MAX_VEL = BOMB_MASS
 LASER_VEL = SCREEN_WIDTH/1.5
 
 # Bullet and Bombshell projectiles parameter that affects the (spherical) range of the damage.
-BULLET_RADIUS = SCREEN_WIDTH/100
+BULLET_RADIUS = SCREEN_WIDTH/10
 BOMB_RADIUS = SCREEN_WIDTH/50
 
 # Laser projectiles parameter that affects the (cylindrical) range of the damage.
