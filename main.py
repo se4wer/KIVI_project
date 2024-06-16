@@ -11,6 +11,7 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.graphics import Rectangle, Color
 from Obstacle import Obstacle
+from Laser import Laser
 from Bullet import Bullet
 import cannon_constants as CONST
 
@@ -36,6 +37,7 @@ class Game(Widget):
     obstacle = ObjectProperty(None)
     obstacles = ListProperty([])
     chosen_weapon = "bullet"
+    laserFired = False
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
@@ -64,12 +66,23 @@ class Game(Widget):
         self.obstacles.remove(obstacle)
 
     def serve_ball(self, ang, coef):
-        self.ball_released = True
-        self.ball.pos = SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3
-        self.ball.velocity = (Initial_velocity * cos(ang) * coef, Initial_velocity * sin(ang) * coef)
+        if self.chosen_weapon == "bullet":
+            self.ball_released = True
+            self.ball.pos = SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3
+            self.ball.velocity = (Initial_velocity * cos(ang) * coef, Initial_velocity * sin(ang) * coef)
+        if self.chosen_weapon == "laser":
+            self.fireLaser(ang)
 
+    def fireLaser(self, angle):
+        if self.laserFired == False:
+            self.laser = Laser(pos=(300,300))
+            self.laser.rotate(angle)
+            self.add_widget(self.laser)
+            self.laserFired = True
+        else:
+            print("WAIT")
     def spawn_ball(self):
-        self.ball.pos = SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3
+        self.ball.pos = CONST.SCREEN_WIDTH / 3, CONST.SCREEN_HEIGHT / 3
         self.ball.velocity = (0, 0)
         self.ball_released = False
 
@@ -92,6 +105,12 @@ class Game(Widget):
             self.ball.move()
             if self.ball.pos[0] > CONST.SCREEN_WIDTH + 10:
                 self.spawn_ball()
+        if self.chosen_weapon == "laser" and self.laserFired:
+            if self.laser.size[0] > 0:
+                self.laser.size[0] -= 2
+            else:
+                self.remove_widget(self.laser)
+                self.laserFired = False
 
         if self.start:
             print("game started")

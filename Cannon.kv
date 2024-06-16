@@ -17,6 +17,19 @@
             size: self.size
             source: 'stone_texture.png'
 
+<Laser>:
+    size: 20, 2000
+    pos: 300, 300
+    canvas:
+        PushMatrix
+        Rotate:
+            angle: self.angle
+            origin: 300, 300
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        PopMatrix
+
 <Game>:
     ball: pong_ball
 
