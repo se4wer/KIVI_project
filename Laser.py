@@ -13,4 +13,5 @@ class Laser(Widget):
         self.origin = C.SCREEN_WIDTH/3, C.SCREEN_HEIGHT/3
 
     def rotate(self, delta_angle):
-        self.angle = (delta_angle - 90) * 5
+        self.angle = delta_angle
+        print(f"actual angle = {self.angle}")

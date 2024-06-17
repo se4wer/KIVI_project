@@ -17,3 +17,6 @@ class Obstacle(Widget):
         if self.collide_widget(ball):
             # print(f"collision with {self.id}")
             return True
+    def laserCollision(self, laser):
+        if self.collide_widget(laser):
+            return True

@@ -1,5 +1,5 @@
 import math
-from math import sin, cos, atan, sqrt
+from math import sin, cos, atan, sqrt, pi
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
@@ -58,6 +58,12 @@ class Game(Widget):
                 self.remove_obstacle(obs)
             # print()
         # print(len(self.obstacles))
+
+    def laserBlast(self):
+        for obs in self.obstacles[:]:
+            if Obstacle.laserCollision(obs, self.laser):
+                self.remove_obstacle(obs)
+
     def startGame(self):
         self.start = True
 
@@ -75,8 +81,9 @@ class Game(Widget):
 
     def fireLaser(self, angle):
         if self.laserFired == False:
-            self.laser = Laser(pos=(300,300))
-            self.laser.rotate(angle)
+            self.laser = Laser(pos=(400,300))
+            self.laser.rotate(angle*180/pi - 90)
+            print(angle)
             self.add_widget(self.laser)
             self.laserFired = True
         else:
@@ -101,6 +108,10 @@ class Game(Widget):
                 self.bullet_blast(obstacle)
                 self.spawn_ball()
                 # self.remove_obstacle(obstacle)
+            if self.laserFired:
+                if obstacle.laserCollision(self.laser):
+                    self.laserBlast()
+                    print("collision")
         if self.ball_released:
             self.ball.move()
             if self.ball.pos[0] > CONST.SCREEN_WIDTH + 10:
